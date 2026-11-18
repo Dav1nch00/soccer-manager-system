@@ -1,0 +1,17 @@
+{
+  "idPerfil" : "usr-9ff705eb",
+  "nombreUsuario" : "david",
+  "passwordHash" : "5hfz0oxZQqcS6GjNpvJZNg==:deRwHh/9Vcn1EIx38K5jMv5RaMRrlAthhY6e2shLRNQ=",
+  "clubId" : "club-nal",
+  "nombreClub" : "Barcelona",
+  "fechaCreacion" : "2026-11-17T20:03:22",
+  "ultimaConexion" : "2026-11-18T08:38:31",
+  "partidosJugados" : 8,
+  "partidosGanados" : 2,
+  "partidosEmpatados" : 5,
+  "partidosPerdidos" : 1,
+  "golesAFavor" : 4,
+  "golesEnContra" : 2,
+  "puntosTotales" : 11,
+  "titulosGanados" : 0
+}

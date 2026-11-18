@@ -1,0 +1,12 @@
+com\soccermanager\client\ui\VistaMiPlantilla.class
+com\soccermanager\client\builders\PlanDeJuegoBuilder.class
+com\soccermanager\client\network\MotorConexion$2.class
+com\soccermanager\client\network\MotorConexion.class
+com\soccermanager\client\ui\VistaSelectorModo.class
+com\soccermanager\client\ui\ClienteTacticoApp.class
+com\soccermanager\client\ui\VistaPanelResultados.class
+com\soccermanager\client\ui\VistaPizarraTactica.class
+com\soccermanager\client\ui\VistaPanelResultados$1.class
+com\soccermanager\client\network\MotorConexion$1.class
+com\soccermanager\client\ui\VistaCentroScouting.class
+com\soccermanager\client\ui\VistaLogin.class

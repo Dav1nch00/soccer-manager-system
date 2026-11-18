@@ -1,0 +1,17 @@
+{
+  "idPerfil" : "usr-7dd73912",
+  "nombreUsuario" : "senko",
+  "passwordHash" : "XMie3X5KK3lHWvZKkzh0Lg==:Up7bCzXimHlo5IeCe7bwLxHijOA9uKWk6tR9MG+zkss=",
+  "clubId" : "club-nal",
+  "nombreClub" : "Atlético Nacional",
+  "fechaCreacion" : "2026-11-17T20:03:41",
+  "ultimaConexion" : "2026-11-17T20:03:41",
+  "partidosJugados" : 0,
+  "partidosGanados" : 0,
+  "partidosEmpatados" : 0,
+  "partidosPerdidos" : 0,
+  "golesAFavor" : 0,
+  "golesEnContra" : 0,
+  "puntosTotales" : 0,
+  "titulosGanados" : 0
+}

@@ -1,0 +1,15 @@
+com\soccermanager\common\enums\EstadoSalaEnum.class
+com\soccermanager\common\enums\EstrategiaEnum.class
+com\soccermanager\common\dto\ResultadoPartidoDTO.class
+com\soccermanager\common\dto\PerfilDTO.class
+com\soccermanager\common\dto\SalaEstadoDTO.class
+com\soccermanager\common\enums\FormacionEnum.class
+com\soccermanager\common\enums\TipoIncidenciaEnum.class
+com\soccermanager\common\enums\EstadoJugadorEnum.class
+com\soccermanager\common\enums\PosicionEnum.class
+com\soccermanager\common\enums\ModoJuegoEnum.class
+com\soccermanager\common\dto\ReporteRivalDTO.class
+com\soccermanager\common\dto\PlanDeJuegoDTO.class
+com\soccermanager\common\dto\IncidenciaDTO.class
+com\soccermanager\common\dto\SesionDTO.class
+com\soccermanager\common\dto\JugadorDTO.class

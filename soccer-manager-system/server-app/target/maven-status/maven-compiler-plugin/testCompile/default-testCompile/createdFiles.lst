@@ -1,0 +1,6 @@
+com\soccermanager\server\SimuladorCompletoIntegrationTest.class
+com\soccermanager\server\domain\DominioPatronesTest.class
+com\soccermanager\server\lobby\LobbyYScoutingTest.class
+com\soccermanager\server\persistence\PerfilServiceTest.class
+com\soccermanager\server\engine\SimuladorJornadaTest.class
+com\soccermanager\server\SimuladorCompletoIntegrationTest$TemporizadorControlado.class

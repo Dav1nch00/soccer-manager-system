@@ -1,0 +1,2 @@
+# Carpeta de persistencia para archivos de perfil JSON
+# Cada perfil registrado generara un archivo: data/perfiles/<nombre_usuario>.json
