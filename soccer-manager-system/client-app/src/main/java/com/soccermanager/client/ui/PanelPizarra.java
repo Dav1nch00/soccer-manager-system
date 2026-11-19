@@ -12,24 +12,51 @@ import com.soccermanager.common.enums.FormacionEnum;
 import com.soccermanager.common.enums.PosicionEnum;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Panel de Pizarra Táctica Visual.
+ * Muestra un campo de fútbol con los 11 titulares posicionados
+ * y un panel de suplentes a la derecha. Diseño intuitivo estilo videojuego.
+ */
 public class PanelPizarra extends JPanel {
 
     private final MotorConexion conexion;
     private final SesionDTO sesion;
     private final PlanDeJuegoBuilder builder;
 
+    private JPanel panelCampo;
+    private JPanel panelSuplentes;
     private JComboBox<FormacionEnum> comboFormacion;
     private JComboBox<EstrategiaEnum> comboEstrategia;
-    private JTable tablaTitulares;
-    private DefaultTableModel modeloTitulares;
     private JButton btnSimular;
     private JLabel lblInfoTitulares;
     private JLabel lblClubInfo;
+
+    // Mapas para rastrear los paneles de jugadores en el campo y suplentes
+    private final List<JugadorCampoPanel> titularesEnCampo = new ArrayList<>();
+    private final List<JugadorCampoPanel> suplentesPanel = new ArrayList<>();
+
+    // Posiciones predeterminadas del campo (x, y) para formación 4-4-2
+    private static final int[][] POSICIONES_CAMPO = {
+            {50, 300},   // Portero
+            {120, 180},  // Defensa Izq
+            {120, 420},  // Defensa Der
+            {250, 120},  // Defensa Central Izq
+            {250, 480},  // Defensa Central Der
+            {400, 150},  // Medio Izq
+            {400, 450},  // Medio Der
+            {500, 250},  // Medio Centro Izq
+            {500, 350},  // Medio Centro Der
+            {750, 200},  // Delantero Izq
+            {750, 400}   // Delantero Der
+    };
 
     public PanelPizarra(MotorConexion conexion, SesionDTO sesion) {
         this.conexion = conexion;
@@ -39,9 +66,55 @@ public class PanelPizarra extends JPanel {
         inicializarAlineacion();
     }
 
+    /**
+     * Panel pequeño que representa a un jugador en el campo o en suplentes.
+     * Muestra dorsal y nombre dentro de un círculo con borde de color.
+     */
+    private static class JugadorCampoPanel extends JPanel {
+        private final JLabel lblDorsal;
+        private final JLabel lblNombre;
+
+        public JugadorCampoPanel(JugadorDTO jugador, boolean esTitular) {
+            setLayout(new BorderLayout(2, 2));
+            setPreferredSize(new Dimension(80, 60));
+            setMaximumSize(new Dimension(80, 60));
+            setMinimumSize(new Dimension(80, 60));
+
+            // Color de borde según estado
+            Color bordeColor = esTitular ? new Color(0, 153, 0) : new Color(102, 102, 102);
+            if (!jugador.isDisponible()) {
+                bordeColor = new Color(204, 0, 0);
+            }
+            setBorder(new LineBorder(bordeColor, 2, true));
+            setBackground(new Color(240, 248, 255));
+
+            lblDorsal = new JLabel(String.valueOf(jugador.getDorsal()), SwingConstants.CENTER);
+            lblDorsal.setFont(new Font("SansSerif", Font.BOLD, 14));
+            lblDorsal.setForeground(new Color(0, 102, 204));
+
+            lblNombre = new JLabel(jugador.getNombre(), SwingConstants.CENTER);
+            lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 10));
+            lblNombre.setForeground(Color.DARK_GRAY);
+
+            add(lblDorsal, BorderLayout.NORTH);
+            add(lblNombre, BorderLayout.SOUTH);
+        }
+
+        public void actualizar(JugadorDTO jugador, boolean esTitular) {
+            lblDorsal.setText(String.valueOf(jugador.getDorsal()));
+            lblNombre.setText(jugador.getNombre());
+            Color bordeColor = esTitular ? new Color(0, 153, 0) : new Color(102, 102, 102);
+            if (!jugador.isDisponible()) {
+                bordeColor = new Color(204, 0, 0);
+            }
+            setBorder(new LineBorder(bordeColor, 2, true));
+            repaint();
+        }
+    }
+
     private void inicializarComponentes() {
         setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel panelEncabezado = new JPanel(new BorderLayout());
         lblClubInfo = new JLabel("Club: " + sesion.getNombreClub());
@@ -58,15 +131,71 @@ public class PanelPizarra extends JPanel {
 
         add(panelEncabezado, BorderLayout.NORTH);
 
+        JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
+
+        panelCampo = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(new Color(34, 139, 34));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(2));
+
+                g2.drawRect(10, 10, getWidth() - 20, getHeight() - 20);
+
+                g2.drawLine(getWidth() / 2, 10, getWidth() / 2, getHeight() - 10);
+
+                int centroX = getWidth() / 2;
+                int centroY = getHeight() / 2;
+                int radio = 60;
+                g2.drawOval(centroX - radio, centroY - radio, radio * 2, radio * 2);
+                g2.fillOval(centroX - 3, centroY - 3, 6, 6);
+
+                int areaAncho = 130;
+                int areaAlto = 200;
+                g2.drawRect(10, centroY - areaAlto / 2, areaAncho, areaAlto);
+                g2.drawRect(getWidth() - 10 - areaAncho, centroY - areaAlto / 2, areaAncho, areaAlto);
+
+                int metaAncho = 50;
+                int metaAlto = 100;
+                g2.drawRect(10, centroY - metaAlto / 2, metaAncho, metaAlto);
+                g2.drawRect(getWidth() - 10 - metaAncho, centroY - metaAlto / 2, metaAncho, metaAlto);
+
+                g2.setColor(new Color(200, 200, 200));
+                g2.drawLine(10, centroY - metaAlto / 2, 10, centroY + metaAlto / 2);
+                g2.drawLine(getWidth() - 10, centroY - metaAlto / 2, getWidth() - 10, centroY + metaAlto / 2);
+            }
+        };
+        panelCampo.setPreferredSize(new Dimension(850, 500));
+        panelCampo.setMinimumSize(new Dimension(600, 400));
+        panelCampo.setLayout(null);
+        panelCentral.add(panelCampo, BorderLayout.CENTER);
+
+        panelSuplentes = new JPanel();
+        panelSuplentes.setLayout(new BoxLayout(panelSuplentes, BoxLayout.Y_AXIS));
+        panelSuplentes.setPreferredSize(new Dimension(200, 500));
+        panelSuplentes.setBorder(BorderFactory.createTitledBorder("Suplentes"));
+
+        JScrollPane scrollSuplentes = new JScrollPane(panelSuplentes);
+        scrollSuplentes.setPreferredSize(new Dimension(220, 500));
+        panelCentral.add(scrollSuplentes, BorderLayout.EAST);
+
+        add(panelCentral, BorderLayout.CENTER);
+
         JPanel panelConfig = new JPanel(new GridBagLayout());
-        panelConfig.setBorder(BorderFactory.createTitledBorder("Configuracion Tactica"));
+        panelConfig.setBorder(BorderFactory.createTitledBorder("Configuración Táctica"));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.anchor = GridBagConstraints.WEST;
 
         gbc.gridx = 0; gbc.gridy = 0;
-        panelConfig.add(new JLabel("Formacion:"), gbc);
+        panelConfig.add(new JLabel("Formación:"), gbc);
         gbc.gridx = 1;
         comboFormacion = new JComboBox<>(FormacionEnum.values());
         comboFormacion.setSelectedItem(FormacionEnum.F_4_4_2);
@@ -81,34 +210,11 @@ public class PanelPizarra extends JPanel {
         comboEstrategia.addActionListener(e -> actualizarEstrategia());
         panelConfig.add(comboEstrategia, gbc);
 
-        add(panelConfig, BorderLayout.CENTER);
+        add(panelConfig, BorderLayout.SOUTH);
 
-        String[] columnas = {"#", "Dorsal", "Nombre", "Posicion", "Media", "Energia", "Estado"};
-        modeloTitulares = new DefaultTableModel(columnas, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        tablaTitulares = new JTable(modeloTitulares);
-        tablaTitulares.setRowHeight(26);
-        tablaTitulares.getTableHeader().setBackground(new Color(0, 102, 204));
-        tablaTitulares.getTableHeader().setForeground(Color.WHITE);
-        tablaTitulares.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < tablaTitulares.getColumnCount(); i++) {
-            tablaTitulares.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        JScrollPane scrollPane = new JScrollPane(tablaTitulares);
-        add(scrollPane, BorderLayout.CENTER);
-
-        lblInfoTitulares = new JLabel("Titulares: 0 / 11");
+        lblInfoTitulares = new JLabel("Titulares: 0 / 11 | Suplentes: 0 / 11");
         lblInfoTitulares.setFont(new Font("SansSerif", Font.BOLD, 14));
-        add(lblInfoTitulares, BorderLayout.SOUTH);
+        add(lblInfoTitulares, BorderLayout.PAGE_END);
     }
 
     private void inicializarAlineacion() {
@@ -124,7 +230,7 @@ public class PanelPizarra extends JPanel {
             alinearPorPosicion(plantilla, PosicionEnum.MEDIOCAMPISTA, 4);
             alinearPorPosicion(plantilla, PosicionEnum.DELANTERO, 2);
 
-            actualizarTablaTitulares();
+            actualizarCampo();
         } catch (Exception e) {
             lblClubInfo.setText("Error al cargar plantilla: " + e.getMessage());
         }
@@ -144,7 +250,7 @@ public class PanelPizarra extends JPanel {
     private void actualizarFormacion() {
         FormacionEnum formacion = (FormacionEnum) comboFormacion.getSelectedItem();
         builder.setFormacion(formacion);
-        actualizarTablaTitulares();
+        actualizarCampo();
     }
 
     private void actualizarEstrategia() {
@@ -152,37 +258,85 @@ public class PanelPizarra extends JPanel {
         builder.setEstrategia(estrategia);
     }
 
-    private void actualizarTablaTitulares() {
-        modeloTitulares.setRowCount(0);
-        List<JugadorDTO> titulares = builder.getTitularesActuales();
+    private void actualizarCampo() {
+        panelCampo.removeAll();
+        panelSuplentes.removeAll();
+        titularesEnCampo.clear();
+        suplentesPanel.clear();
 
-        for (int i = 0; i < titulares.size(); i++) {
-            JugadorDTO j = titulares.get(i);
-            Object[] fila = {
-                    i + 1,
-                    j.getDorsal(),
-                    j.getNombre(),
-                    j.getPosicion().getAbreviatura(),
-                    String.format("%.1f", j.getMediaGeneral()),
-                    j.getEnergia() + "%",
-                    j.getEstado().getEtiqueta()
-            };
-            modeloTitulares.addRow(fila);
+        List<JugadorDTO> titulares = builder.getTitularesActuales();
+        List<JugadorDTO> plantilla;
+        try {
+            plantilla = conexion.obtenerPlantilla(sesion.getClubId());
+        } catch (Exception e) {
+            plantilla = new ArrayList<>();
+        }
+
+        int posIndex = 0;
+        int alturaCampo = panelCampo.getHeight() > 0 ? panelCampo.getHeight() : 500;
+        int anchoCampo = panelCampo.getWidth() > 0 ? panelCampo.getWidth() : 850;
+
+        for (JugadorDTO j : titulares) {
+            int x, y;
+            switch (j.getPosicion()) {
+                case PORTERO:
+                    x = 50; y = alturaCampo / 2;
+                    break;
+                case DEFENSA:
+                    x = 120 + (posIndex % 4) * 130;
+                    y = posIndex < 2 ? 150 : alturaCampo - 150;
+                    break;
+                case MEDIOCAMPISTA:
+                    x = 350 + (posIndex % 4) * 100;
+                    y = posIndex < 2 ? 120 : alturaCampo - 120;
+                    break;
+                case DELANTERO:
+                    x = anchoCampo - 150 + (posIndex % 2) * 50;
+                    y = posIndex < 1 ? 180 : alturaCampo - 180;
+                    break;
+                default:
+                    x = 400; y = alturaCampo / 2;
+            }
+
+            JugadorCampoPanel panelJugador = new JugadorCampoPanel(j, true);
+            panelJugador.setBounds(x - 40, y - 30, 80, 60);
+            panelCampo.add(panelJugador);
+            titularesEnCampo.add(panelJugador);
+            posIndex++;
+        }
+
+        int suplenteIndex = 0;
+        for (JugadorDTO j : plantilla) {
+            boolean esTitular = titulares.stream().anyMatch(t -> t.getIdJugador().equals(j.getIdJugador()));
+            if (!esTitular) {
+                JugadorCampoPanel panelJugador = new JugadorCampoPanel(j, false);
+                panelJugador.setMaximumSize(new Dimension(180, 60));
+                panelSuplentes.add(panelJugador);
+                panelSuplentes.add(Box.createRigidArea(new Dimension(0, 5)));
+                suplentesPanel.add(panelJugador);
+                suplenteIndex++;
+            }
         }
 
         lblInfoTitulares.setText(
                 "Titulares: " + builder.getCantidadTitularesActual() + " / 11 | " +
-                        "Formacion: " + builder.getFormacion().getEtiqueta() + " | " +
+                        "Suplentes: " + suplenteIndex + " | " +
+                        "Formación: " + builder.getFormacion().getEtiqueta() + " | " +
                         "Estrategia: " + builder.getEstrategia().getNombre()
         );
+
+        panelCampo.revalidate();
+        panelCampo.repaint();
+        panelSuplentes.revalidate();
+        panelSuplentes.repaint();
     }
 
     private void confirmarYSimular() {
         try {
             PlanDeJuegoDTO plan = builder.build();
             JOptionPane.showMessageDialog(this,
-                    "Alineacion verificada con exito (" + plan.getCantidadTitulares() + " titulares).",
-                    "Validacion Tactica", JOptionPane.INFORMATION_MESSAGE);
+                    "Alineación verificada con éxito (" + plan.getCantidadTitulares() + " titulares).",
+                    "Validación Táctica", JOptionPane.INFORMATION_MESSAGE);
 
             btnSimular.setEnabled(false);
             btnSimular.setText("Enviando...");
@@ -205,7 +359,7 @@ public class PanelPizarra extends JPanel {
                         } else {
                             JOptionPane.showMessageDialog(PanelPizarra.this,
                                     "Servidor: " + sala.getMensaje(),
-                                    "Simulacion", JOptionPane.INFORMATION_MESSAGE);
+                                    "Simulación", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(PanelPizarra.this,
@@ -217,7 +371,7 @@ public class PanelPizarra extends JPanel {
             worker.execute();
         } catch (IllegalStateException e) {
             JOptionPane.showMessageDialog(this,
-                    "Error de validacion tactica: " + e.getMessage(),
+                    "Error de validación táctica: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -237,10 +391,10 @@ public class PanelPizarra extends JPanel {
         lblTemporizador.setFont(new Font("SansSerif", Font.BOLD, 48));
         lblTemporizador.setForeground(new Color(204, 0, 0));
 
-        JLabel lblMensaje = new JLabel("El rival confirmo su estrategia.", SwingConstants.CENTER);
+        JLabel lblMensaje = new JLabel("El rival confirmó su estrategia.", SwingConstants.CENTER);
         lblMensaje.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        JButton btnCancelar = new JButton("Aceptar simulacion automatica");
+        JButton btnCancelar = new JButton("Aceptar simulación automática");
         btnCancelar.addActionListener(e -> dialogo.dispose());
 
         JPanel panel = new JPanel(new BorderLayout(10, 10));
@@ -259,11 +413,11 @@ public class PanelPizarra extends JPanel {
                 if (estado.getEstadoSala() == EstadoSalaEnum.FINALIZADA ||
                         estado.getEstadoSala() == EstadoSalaEnum.SIMULANDO) {
                     ((Timer) e.getSource()).stop();
-                    lblMensaje.setText("Simulacion completada: " + estado.getMensaje());
+                    lblMensaje.setText("Simulación completada: " + estado.getMensaje());
                     btnCancelar.setText("Cerrar");
                 } else if (segundos <= 0) {
                     ((Timer) e.getSource()).stop();
-                    lblMensaje.setText("Tiempo agotado. Simulando con alineacion actual...");
+                    lblMensaje.setText("Tiempo agotado. Simulando con alineación actual...");
                 }
             } catch (Exception ex) {
                 ((Timer) e.getSource()).stop();
