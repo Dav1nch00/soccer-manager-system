@@ -223,8 +223,13 @@ public class PanelPizarra extends JPanel {
     }
 
     private void mostrarCuentaRegresiva(SalaEstadoDTO salaInicial) {
-        JDialog dialogo = new JDialog(SwingUtilities.getWindowAncestor(this),
-                "Cuenta Regresiva - 60 segundos", true);
+        Window owner = SwingUtilities.getWindowAncestor(this);
+        if (owner == null) {
+            owner = new Frame();
+        }
+        JDialog dialogo = new JDialog(owner,
+                "Cuenta Regresiva - 60 segundos",
+                java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         dialogo.setSize(400, 200);
         dialogo.setLocationRelativeTo(this);
 

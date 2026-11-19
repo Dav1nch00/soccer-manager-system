@@ -1,5 +1,5 @@
-classpath:C:\Users\davin\Desktop\estudio\semestre 10\arq. clie. ser\proyecto_final\soccer-manager-system\client-app\target\classes	12:8f5ae3a97fac14ceb6e111ffa968d0c5b0ad880acb90276e7ea414d7153ea551
-classpath:C:\Users\davin\Desktop\estudio\semestre 10\arq. clie. ser\proyecto_final\soccer-manager-system\common-dto\target\classes	15:19d3f35a36e6f7eb5c08a1350a1c2234e0951c634a97aa63eb181ad62aa5362e
+classpath:C:\Users\davin\Desktop\estudio\semestre 10\arq. clie. ser\proyecto_final\soccer-manager-system\client-app\target\classes	32:d3972416de53b7500a6348b6fa9f669c175781b1000d5eaeaf707f1c8840499f
+classpath:C:\Users\davin\Desktop\estudio\semestre 10\arq. clie. ser\proyecto_final\soccer-manager-system\common-dto\target\common-dto-1.0.0-SNAPSHOT.jar	25666:1795042803816
 classpath:C:\Users\davin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.2\jackson-databind-2.15.2.jar	1620088:1794960402461
 classpath:C:\Users\davin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.2\jackson-annotations-2.15.2.jar	75567:1794960402532
 classpath:C:\Users\davin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.2\jackson-core-2.15.2.jar	549207:1794960402642
@@ -12,4 +12,4 @@ classpath:C:\Users\davin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\ap
 classpath:C:\Users\davin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.9.3\junit-jupiter-params-5.9.3.jar	579605:1794960402686
 classpath:C:\Users\davin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.9.3\junit-jupiter-engine-5.9.3.jar	246666:1794960402695
 classpath:C:\Users\davin\.m2\repository\org\junit\platform\junit-platform-engine\1.9.3\junit-platform-engine-1.9.3.jar	189226:1794960402695
-classpath:C:\Users\davin\Desktop\estudio\semestre 10\arq. clie. ser\proyecto_final\soccer-manager-system\server-app\target\classes	40:ffecac14ffb868e55cc15e2d4d1ad3b50643e8bf27e6b7e7c0575efd07feb739
+classpath:C:\Users\davin\Desktop\estudio\semestre 10\arq. clie. ser\proyecto_final\soccer-manager-system\server-app\target\server-app-1.0.0-SNAPSHOT.jar	79809:1795042805119
